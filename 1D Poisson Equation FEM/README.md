@@ -73,7 +73,7 @@ $$
 where $h_e$ is the length of the element. Substituting into the above equation gives the local element stiffness matrix:
 
 $$
-K_e = \frac{1}{h_e} \begin{array}{cc} 1 & -1 \\\ -1 & 1 \end{array}
+K_e = \frac{1}{h_e} \begin{bmatrix} 1 & -1 \\\ -1 & 1 \end{bmatrix}
 $$
 
 ### Element Load Vector
