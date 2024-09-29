@@ -11,7 +11,7 @@ $$u(0) = 0, u(L) = 0$$
 
 In this problem, $f(x) = 1$, and the analytical solution is $u(x) = x(1-x)/2$.
 
-![Poisson Equation Diagram](FEM.svg){: .center}
+<div style="text-align:center"><img src="FEM.svg" /></div>.
 
 Problem Setup
 -------------
