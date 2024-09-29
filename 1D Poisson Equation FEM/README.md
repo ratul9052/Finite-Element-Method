@@ -3,8 +3,9 @@
 This repository contains a Python implementation of the **Finite Element Method (FEM)** to solve the 1D Poisson equation:
 
 $$
- \frac{d^2 u}{dx^2} = f(x), \quad 0 \leq x \leq L
+ \frac{d^2 u}{dx^2} = -f(x), \quad 0 \leq x \leq L
 $$
+
 with **Dirichlet boundary conditions**:
 
 $$
@@ -24,7 +25,7 @@ $$
 The strong form of the equation is:
 
 $$
- \frac{d^2 u}{dx^2} = 1
+ \frac{d^2 u}{dx^2} = -1
 $$
 
 with the boundary conditions $u(0) = 0$ and $u(L) = 0$.
@@ -72,7 +73,7 @@ $$
 where $h_e$ is the length of the element. Substituting into the above equation gives the local element stiffness matrix:
 
 $$
-K_e = \frac{1}{h_e} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}
+K_e = \frac{1}{h_e} \begin{array}{cc} 1 & -1 \\ -1 & 1 \end{array}
 $$
 
 ### Element Load Vector
@@ -86,7 +87,7 @@ $$
 For the source term $f(x) = 1$, the local load vector becomes:
 
 $$
-F_e = \frac{h_e}{2} \begin{bmatrix} 1 \\ 1 \end{bmatrix}
+F_e = \frac{h_e}{2} \begin{array}{c} 1 \\ 1 \end{array}
 $$
 
 ### Global System Assembly
