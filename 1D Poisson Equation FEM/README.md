@@ -10,9 +10,9 @@ with Dirichlet boundary conditions:
 $$u(0) = 0, u(L) = 0$$
 
 In this problem, $f(x) = 1$, and the analytical solution is $u(x) = x(1-x)/2$.
-<center>
-![Poisson Equation Diagram](FEM.svg)
-<center>
+
+![Poisson Equation Diagram](FEM.svg){: .center}
+
 Problem Setup
 -------------
 
