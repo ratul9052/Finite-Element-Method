@@ -3,19 +3,18 @@
 This repository contains a Python implementation of the **Finite Element Method (FEM)** to solve the 1D Poisson equation:
 
 $$
-- \frac{d^2 u}{dx^2} = f(x), \quad 0 \leq x \leq L
+ \frac{d^2 u}{dx^2} = f(x), \quad 0 \leq x \leq L
 $$
-
 with **Dirichlet boundary conditions**:
 
 $$
 u(0) = 0, \quad u(L) = 0
 $$
 
-In this problem, $f(x) = 1$, and the **analytical solution** is:
+In this problem, $f(x) = -1$, and the **analytical solution** is:
 
 $$
-u(x) = x(1 - x)
+u(x) = x(1 - x)/2
 $$
 
 ## Problem Setup
@@ -25,7 +24,7 @@ $$
 The strong form of the equation is:
 
 $$
-- \frac{d^2 u}{dx^2} = 1
+ \frac{d^2 u}{dx^2} = 1
 $$
 
 with the boundary conditions $u(0) = 0$ and $u(L) = 0$.
@@ -113,14 +112,8 @@ Once the system is assembled and boundary conditions are applied, the linear sys
 The analytical solution to the 1D Poisson equation is:
 
 $$
-u(x) = x(1 - x)
+u(x) = x(1 - x)/2
 $$
 
 The FEM solution is compared with this analytical solution to verify its accuracy.
 
-## How to Run the Code
-
-1. Install the required libraries:
-
-   ```bash
-   pip install numpy matplotlib
