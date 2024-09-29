@@ -73,7 +73,7 @@ $$
 where $h_e$ is the length of the element. Substituting into the above equation gives the local element stiffness matrix:
 
 $$
-K_e = \frac{1}{h_e} \begin{array}{cc} 1 & -1 \\ -1 & 1 \end{array}
+K_e = \frac{1}{h_e} \begin{array}{cc} 1 & -1 \\\ -1 & 1 \end{array}
 $$
 
 ### Element Load Vector
@@ -87,7 +87,7 @@ $$
 For the source term $f(x) = 1$, the local load vector becomes:
 
 $$
-F_e = \frac{h_e}{2} \begin{array}{c} 1 \\ 1 \end{array}
+F_e = \frac{h_e}{2} \begin{bmatrix} 1 \\\ 1 \end{bmatrix}
 $$
 
 ### Global System Assembly
