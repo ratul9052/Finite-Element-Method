@@ -1,120 +1,100 @@
-# 1D Poisson Equation Solver using Finite Element Method (FEM)
+1D Poisson Equation Solver using Finite Element Method (FEM)
+============================================================
 
-This repository contains a Python implementation of the **Finite Element Method (FEM)** to solve the 1D Poisson equation:
+This repository contains a Python implementation of the Finite Element Method (FEM) to solve the 1D Poisson equation:
 
-$$
- \frac{d^2 u}{dx^2} = -f(x), \quad 0 \leq x \leq L
-$$
+$$-\frac{d^2u}{dx^2} = f(x), 0 \leq x \leq L$$
 
-with **Dirichlet boundary conditions**:
+with Dirichlet boundary conditions:
 
-$$
-u(0) = 0, \quad u(L) = 0
-$$
+$$u(0) = 0, u(L) = 0$$
 
-In this problem, $f(x) = -1$, and the **analytical solution** is:
+In this problem, $f(x) = 1$, and the analytical solution is $u(x) = x(1-x)/2$.
 
-$$
-u(x) = x(1 - x)/2
-$$
+![Poisson Equation Diagram](FEM.svg)
 
-## Problem Setup
+Problem Setup
+-------------
 
-### Strong Form
-
-The strong form of the equation is:
-
-$$
- \frac{d^2 u}{dx^2} = -1
-$$
-
-with the boundary conditions $u(0) = 0$ and $u(L) = 0$.
+The 1D Poisson equation is a second-order differential equation. To solve it using FEM, the process involves the following steps:
 
 ### Weak Formulation
 
-To solve this equation using FEM, the weak form is derived. First, multiply the differential equation by a test function $v(x)$ and integrate over the domain:
+To apply FEM, we first need to derive the weak form of the differential equation. We multiply the original differential equation by a test function $v$ (which belongs to the same space as $u$) and integrate over the domain:
 
-$$
-\int_0^L \left( - \frac{d^2 u}{dx^2} \right) v(x) \, dx = \int_0^L f(x) v(x) \, dx
-$$
+$$\int_0^L \left(-\frac{d^2u}{dx^2}\right)v(x) dx = \int_0^L f(x)v(x) dx$$
 
-Using integration by parts, this simplifies to:
+Using integration by parts and applying the boundary conditions $u(0) = u(L) = 0$, we arrive at the weak form:
 
-$$
-\int_0^L \frac{du}{dx} \frac{dv}{dx} \, dx = \int_0^L f(x) v(x) \, dx
-$$
+$$\int_0^L \frac{du}{dx}\frac{dv}{dx} dx = \int_0^L f(x)v(x) dx$$
 
-where the boundary terms vanish due to the Dirichlet boundary conditions $u(0) = u(L) = 0$.
+This is the weak formulation that is used to construct the FEM system.
 
-### Discretization and Shape Functions
+### Step 2: Discretization and Shape Functions
 
-The domain $[0, L]$ is discretized into $N$ elements with $N+1$ nodes. The solution $u(x)$ is approximated by a sum of linear shape functions $\phi_i(x)$ as follows:
+The domain $[0, L]$ is divided into $N$ elements, with $N+1$ nodes. We approximate the solution $u(x)$ using linear shape functions $\phi_i(x)$ associated with each node. The solution is expressed as:
 
-$$
-u(x) \approx \sum_{i=0}^{N} u_i \phi_i(x)
-$$
+$$u(x) \approx \sum_{i=0}^N u_i \phi_i(x)$$
 
-The shape functions $\phi_i(x)$ are piecewise linear and locally supported, meaning each shape function is non-zero only over two adjacent elements.
+The shape functions $\phi_i(x)$ are piecewise linear and locally supported, meaning each shape function is non-zero only within the two elements connected to node $i$.
 
 ### Deriving the Element Stiffness Matrix
 
-For each element $e$, the local stiffness matrix is computed by evaluating the integral:
+For each element $e$, we calculate the local stiffness matrix by substituting the shape functions into the weak form.
 
-$$
-K_{e,ij} = \int_{x_e}^{x_{e+1}} \frac{d\phi_i}{dx} \frac{d\phi_j}{dx} \, dx
-$$
+Local Weak Form: For element $e$ with nodes $x_e$ and $x_{e+1}$, the local weak form becomes:
 
-For linear elements, the gradients of the shape functions are constant over each element:
+$$\int_{x_e}^{x_{e+1}} \frac{du_e}{dx}\frac{dv_e}{dx} dx$$
 
-$$
-\frac{d\phi_1}{dx} = -\frac{1}{h_e}, \quad \frac{d\phi_2}{dx} = \frac{1}{h_e}
-$$
+Approximation using Shape Functions: The solution $u(x)$ is approximated by:
 
-where $h_e$ is the length of the element. Substituting into the above equation gives the local element stiffness matrix:
+$$u_e(x) = u_e \phi_1(x) + u_{e+1} \phi_2(x)$$
 
-$$
-K_e = \frac{1}{h_e} \begin{bmatrix} 1 & -1 \\\ -1 & 1 \end{bmatrix}
-$$
+where $\phi_1(x)$ and $\phi_2(x)$ are the shape functions for the element. For linear elements, the shape functions are:
+
+$$\phi_1(x) = \frac{x_{e+1} - x}{h_e}, \phi_2(x) = \frac{x - x_e}{h_e}$$
+
+where $h_e = x_{e+1} - x_e$ is the element length.
+
+Gradient of Shape Functions: The gradients of the shape functions with respect to $x$ are:
+
+$$\frac{d\phi_1}{dx} = -\frac{1}{h_e}, \frac{d\phi_2}{dx} = \frac{1}{h_e}$$
+
+Local Stiffness Matrix: The local stiffness matrix $K_e$ is constructed by evaluating the following integrals:
+
+$$K_e = \frac{1}{h_e} \begin{bmatrix} 1 & -1 \\\ -1 & 1 \end{bmatrix}$$
+
+This is the element stiffness matrix, which is the contribution of each element to the global stiffness matrix.
 
 ### Element Load Vector
 
-The local load vector is computed by evaluating the integral:
+The local load vector is computed by evaluating:
 
-$$
-F_e = \int_{x_e}^{x_{e+1}} f(x) \phi(x) \, dx
-$$
+$$F_e = \int_{x_e}^{x_{e+1}} f(x) \phi(x) dx$$
 
-For the source term $f(x) = 1$, the local load vector becomes:
+For simplicity, we assume $f(x) = 1$, which yields a constant source term. The local load vector is:
 
-$$
-F_e = \frac{h_e}{2} \begin{bmatrix} 1 \\\ 1 \end{bmatrix}
-$$
+$$F_e = \frac{h_e}{2} \begin{bmatrix} 1 \\\ 1 \end{bmatrix}$$
 
 ### Global System Assembly
 
-The global stiffness matrix $K$ and load vector $F$ are assembled by summing the contributions from all elements. The global system can be written as:
+The global stiffness matrix $K$ and load vector $F$ are assembled by summing the contributions from all elements. This leads to the global system:
 
-$$
-K u = F
-$$
+$$Ku = F$$
 
-where $u$ is the vector of nodal values $u_i$.
-
+where $u$ is the vector of unknown of nodal values of $u_i$.
 ### Applying Boundary Conditions
 
-The Dirichlet boundary conditions $u(0) = 0$ and $u(L) = 0$ are enforced by modifying the global stiffness matrix and load vector, setting the first and last rows to reflect the boundary conditions.
+Dirichlet boundary conditions $u(0) = 0$ and $u(L) = 0$ are applied by modifying the first and last rows of the global stiffness matrix $K$ and load vector $F$.
 
 ### Solving the System
 
-Once the system is assembled and boundary conditions are applied, the linear system $K u = F$ is solved to obtain the nodal values $u_i$.
+Once the system is assembled and boundary conditions are applied, the linear system $Ku = F$ is solved to obtain the nodal values $u_i$.
 
 ### Comparing with the Analytical Solution
 
-The analytical solution to the 1D Poisson equation is:
+The analytical solution to the 1D Poisson equation is given by:
 
-$$
-u(x) = x(1 - x)/2
-$$
+$$u(x) = x(1-x)/2$$
 
-The FEM solution is compared with this analytical solution to verify its accuracy.
-
+The FEM solution is compared with the analytical solution to verify accuracy.
